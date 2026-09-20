@@ -3,93 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouTube Automation</title>
-  <meta name="description" content="Official information for YouTube Automation.">
+  <title>Social Video Automation</title>
+  <meta name="description" content="Official information for Social Video Automation, a private tool for authorized YouTube and TikTok publishing.">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 850px;
-      margin: 60px auto;
-      padding: 0 25px;
-      line-height: 1.7;
-      color: #222;
-    }
-
-    h1 {
-      color: #ff0000;
-    }
-
-    h2 {
-      margin-top: 35px;
-    }
-
-    .box {
-      background: #f6f6f6;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 25px 0;
-    }
-
-    a {
-      color: #065fd4;
-    }
-
-    footer {
-      margin-top: 50px;
-      padding-top: 20px;
-      border-top: 1px solid #ddd;
-      color: #666;
-    }
+    body { font-family: Arial, sans-serif; max-width: 850px; margin: 60px auto; padding: 0 25px; line-height: 1.7; color: #222; }
+    h1 { color: #111; }
+    h2 { margin-top: 35px; }
+    .box { background: #f6f6f6; padding: 20px; border-radius: 10px; margin: 25px 0; }
+    a { color: #065fd4; }
+    footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; }
   </style>
 </head>
-
 <body>
-
-  <h1>YouTube Automation</h1>
+  <h1>Social Video Automation</h1>
 
   <p>
-    YouTube Automation is a private content automation tool used to
-    manage, upload, and schedule video content on YouTube.
+    Social Video Automation is a private content automation tool used to create,
+    manage, upload, and publish short-form video content to authorized YouTube and TikTok accounts.
   </p>
 
   <div class="box">
     <strong>Purpose of the application</strong>
     <p>
-      The application uses Google OAuth authorization to securely access
-      the authorized YouTube account and perform requested YouTube
-      content management operations.
+      The application uses official authorization flows from Google/YouTube and TikTok
+      so the account owner can grant access before any publishing or account operation occurs.
     </p>
   </div>
 
-  <h2>Google and YouTube Access</h2>
-
+  <h2>YouTube Integration</h2>
   <p>
-    Access to Google and YouTube services is granted only after the
-    account owner completes Google's OAuth authorization process.
+    The application uses Google OAuth 2.0 to access an authorized YouTube account for operations
+    such as uploading, scheduling, and managing video content requested by the account owner.
   </p>
 
+  <h2>TikTok Integration</h2>
   <p>
-    The application does not request or use Google account credentials
-    such as passwords.
+    The application uses TikTok Login Kit and the TikTok Content Posting API to publish short-form
+    video content to an authorized TikTok account. TikTok access is used only after the account owner
+    explicitly authorizes the application.
   </p>
 
-  <h2>Privacy</h2>
-
+  <h2>Authorization and Security</h2>
   <p>
-    For information about how data is handled, please read our
-    <a href="privacy.html">Privacy Policy</a>.
+    The application does not request or store Google or TikTok account passwords.
+    Access is performed using OAuth access tokens and related authorization credentials.
   </p>
+
+  <h2>Privacy and Terms</h2>
+  <p><a href="privacy.html">Privacy Policy</a></p>
+  <p><a href="terms.html">Terms of Service</a></p>
 
   <h2>Contact</h2>
-
   <p>
     For questions about this application, contact:
     <strong>tranim2019@gmail.com</strong>
   </p>
 
-  <footer>
-    YouTube Automation
-  </footer>
-
+  <footer>Social Video Automation</footer>
 </body>
 </html>
