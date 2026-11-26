@@ -24,7 +24,7 @@ h1{font-size:42px;text-align:center;line-height:1.6;font-weight:bold}
 .hint{text-align:center;font-size:14px;opacity:.7;margin-bottom:6px}
 .day{margin-top:24px}
 .day-date{text-align:center;font-size:22px;font-weight:bold;margin-bottom:12px}
-.match{display:flex;align-items:center;gap:14px;background:linear-gradient(180deg,var(--pill1),var(--pill2));border-radius:60px;padding:20px 30px;margin:14px 0;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:transform .15s,box-shadow .15s}
+.match{display:flex;flex-wrap:wrap;align-items:center;gap:14px;background:linear-gradient(180deg,var(--pill1),var(--pill2));border-radius:60px;padding:20px 30px;margin:14px 0;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:transform .15s,box-shadow .15s}
 .match:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.25)}
 .team{flex:1;min-width:0;font-size:24px;font-weight:bold;color:var(--ink);line-height:1.5;overflow-wrap:anywhere;word-break:break-word}
 .team.away{text-align:left}
@@ -32,6 +32,10 @@ h1{font-size:42px;text-align:center;line-height:1.6;font-weight:bold}
 .vs{color:var(--accent);font-weight:bold;font-size:18px}
 .time{font-size:30px;font-weight:bold;color:var(--ink);overflow-wrap:anywhere}
 .period{font-size:14px;color:var(--muted)}
+.team.win{color:#15803d}
+.team.win:before{content:"\1F3C6 "}
+.res{flex-basis:100%;order:9;text-align:center;font-size:15px;font-weight:bold;color:#15803d;margin-top:-4px}
+.popup .pres{background:#e8f8ee;color:#15803d;border:1px solid #b7e4c7;border-radius:12px;padding:10px 14px;font-weight:bold;font-size:18px;margin-bottom:14px}
 .textcard{background:linear-gradient(180deg,var(--pill1),var(--pill2));border-radius:24px;padding:20px 26px;margin:16px 0;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.18)}
 .textcard .tc-title{font-size:20px;font-weight:bold;margin-bottom:8px;color:var(--card2)}
 .textcard .tc-body{font-size:18px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -74,6 +78,7 @@ h1{font-size:42px;text-align:center;line-height:1.6;font-weight:bold}
     <button class="close" id="closeBtn" aria-label="إغلاق">&times;</button>
     <h2 id="pTitle"></h2>
     <div class="pmeta" id="pMeta"></div>
+    <div class="pres" id="pRes" style="display:none"></div>
     <div class="pdetails" id="pDetails"></div>
   </div>
 </div>
@@ -98,6 +103,8 @@ window.addEventListener("error",function(){
        period   : كلمة صغيرة تحت الميعاد مثل مساءً (اتركها فاضية لو مش عايزها)
        details  : التفاصيل اللي تظهر في النافذة لما الزائر يضغط على المباراة.
                   اكتب عادي، كل سطر في سطر، من غير أي رموز.
+       result   : نتيجة المباراة مثل: فاز رقم 2 على رقم 3 بنتيجة 4 / 1 (اتركها فاضية لو لسه ما لعبوش)
+       winner   : اكتب 1 لو الفريق الأول فاز، أو 2 لو التاني فاز، واتركها فاضية لو مفيش فايز
    - texts        : صناديق نص حر تظهر أسفل المباريات (اختياري)
                     كل صندوق له title (اتركه فاضي لإخفائه) و body
    قواعد مهمة:
@@ -122,6 +129,8 @@ const DATA = {
           team2: `رقم 9`,
           time: `11:00`,
           period: `يوم السبت`,
+          result: ``,
+          winner: ``,
           details: `رقم 1
 رقم موبايله 01080277690
 هيلعب مع 
@@ -137,7 +146,9 @@ const DATA = {
           team1: `رقم 2`,
           team2: `رقم 3`,
           time: `01:00`,
-          period: `انتهت بفوز رقم 2`,
+          period: `انتهت`,
+          result: `فاز رقم 2 على رقم 3 بنتيجة 4 / 1`,
+          winner: `1`,
           details: `رقم 2
 رقم موبايله 010310805544
 هيلعب مع 
@@ -154,6 +165,8 @@ const DATA = {
           team2: `رقم 4`,
           time: ``,
           period: ``,
+          result: ``,
+          winner: ``,
           details: `رقم 5
 رقم موبايله 01555671512
 هيلعب مع 
@@ -170,6 +183,8 @@ const DATA = {
           team2: `رقم 6`,
           time: ``,
           period: ``,
+          result: ``,
+          winner: ``,
           details: `رقم 10
 رقم موبايله 01090652665
 هيلعب مع 
@@ -186,6 +201,8 @@ const DATA = {
           team2: `رقم 8`,
           time: ``,
           period: ``,
+          result: ``,
+          winner: ``,
           details: `رقم 7
 رقم موبايله 01050963827
 هيلعب مع 
@@ -213,12 +230,13 @@ html+='<div class="hint">اضغط على أي مباراة لعرض التفاص
     +(day.date?'<div class="day-date">'+esc(day.date)+'</div>':'');
   (day.matches||[]).forEach(function(m,mi){
     html+='<div class="match" data-d="'+di+'" data-m="'+mi+'">'
-      +'<div class="team home">'+esc(m.team1)+'</div>'
+      +'<div class="team home'+(String(m.winner).trim()==="1"?' win':'')+'">'+esc(m.team1)+'</div>'
       +'<div class="mid"><div class="vs">VS</div>'
       +(m.time?'<div class="time">'+esc(m.time)+'</div>':'')
       +(m.period?'<div class="period">'+esc(m.period)+'</div>':'')
       +'</div>'
-      +'<div class="team away">'+esc(m.team2)+'</div>'
+      +'<div class="team away'+(String(m.winner).trim()==="2"?' win':'')+'">'+esc(m.team2)+'</div>'
+      +(m.result?'<div class="res">'+esc(m.result)+'</div>':'')
       +'</div>';
   });
   html+='</div>';
@@ -239,6 +257,8 @@ function openMatch(di,mi,push){
   document.getElementById("pTitle").textContent=m.team1+" × "+m.team2;
   const meta=[day.date,m.time,m.period].filter(Boolean).join(" - ");
   document.getElementById("pMeta").textContent=meta;
+  var pr=document.getElementById("pRes");
+  pr.textContent=m.result||"";pr.style.display=m.result?"block":"none";
   fillDetails(document.getElementById("pDetails"),m.details||"");
   overlay.classList.add("open");
   if(push!==false){history.replaceState(null,"","#m-"+di+"-"+mi);}
